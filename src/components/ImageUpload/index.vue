@@ -2,17 +2,16 @@
   <div class="component-upload-image">
     <el-upload
       multiple
-      :action="uploadImgUrl"
+      action="#"
       list-type="picture-card"
+      :http-request="handleUpload"
       :on-success="handleUploadSuccess"
       :before-upload="handleBeforeUpload"
       :limit="limit"
       :on-error="handleUploadError"
       :on-exceed="handleExceed"
-      name="file"
       :on-remove="handleRemove"
       :show-file-list="true"
-      :headers="headers"
       :file-list="fileList"
       :on-preview="handlePictureCardPreview"
       :class="{ hide: fileList.length >= limit }"
@@ -46,7 +45,7 @@
 </template>
 
 <script setup>
-import { getToken } from "@/utils/auth";
+import request from '@/utils/request';
 
 const props = defineProps({
   modelValue: [String, Object, Array],
@@ -70,6 +69,11 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  // 业务类型
+  busnessType: {
+    type: String,
+    default: 'default'
+  },
 });
 
 const { proxy } = getCurrentInstance();
@@ -78,9 +82,6 @@ const number = ref(0);
 const uploadList = ref([]);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
-const baseUrl = import.meta.env.VITE_APP_BASE_API;
-const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload"); // 上传的文件服务器地址
-const headers = ref({ Authorization: "Bearer " + getToken() });
 const fileList = ref([]);
 const showTip = computed(
   () => props.isShowTip && (props.fileType || props.fileSize)
@@ -93,11 +94,7 @@ watch(() => props.modelValue, val => {
     // 然后将数组转为对象数组
     fileList.value = list.map(item => {
       if (typeof item === "string") {
-        if (item.indexOf(baseUrl) === -1) {
-          item = { name: baseUrl + item, url: baseUrl + item };
-        } else {
-          item = { name: item, url: item };
-        }
+        item = { name: item, url: item };
       }
       return item;
     });
@@ -110,6 +107,23 @@ watch(() => props.modelValue, val => {
 // 删除图片
 function handleRemove(file, files) {
   emit("update:modelValue", listToString(fileList.value));
+}
+
+function handleUpload(form) {
+  const formData = new FormData();
+  formData.append('file', form.file);
+  request.post(`/sys/common/upload?busnessType=${props.busnessType}`, formData).then(res => {
+    if (res.code !== 1) {
+      proxy.$modal.msgError('上传异常：' + res.msg);
+      return;
+    }
+    const path = res.data.path;
+    const fileName = path.substring(path.lastIndexOf("/")+1);
+    fileList.value.push({ name: fileName, url: path });
+    emit("update:modelValue", listToString(fileList.value));
+  }).finally(() => {
+    proxy.$modal.closeLoading();
+  });
 }
 
 // 上传成功回调
@@ -180,10 +194,10 @@ function listToString(list, separator) {
   separator = separator || ",";
   for (let i in list) {
     if (undefined !== list[i].url && list[i].url.indexOf("blob:") !== 0) {
-      strs += list[i].url.replace(baseUrl, "") + separator;
+      strs += list[i].url + separator;
     }
   }
-  return strs != "" ? strs.substr(0, strs.length - 1) : "";
+  return strs !== "" ? strs.substr(0, strs.length - 1) : "";
 }
 </script>
 

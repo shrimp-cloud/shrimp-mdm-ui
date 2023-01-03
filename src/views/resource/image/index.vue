@@ -16,25 +16,17 @@
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
             <el-button icon="Refresh" @click="resetQuery">重置</el-button>
          </el-form-item>
+        <el-form-item style="float: right">
+          <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+        </el-form-item>
       </el-form>
 
-      <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-         </el-col>
-         <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
-         </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"/>
-      </el-row>
-
-      <el-table v-loading="loading" height="680" :data="pageList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+      <el-table v-loading="loading" height="680" :data="pageList">
         <el-table-column label="ID" align="center" prop="id" width="80"/>
-        <el-table-column label="图片类型" align="center" prop="imageType" width="120">
+        <el-table-column label="图片类型" align="center" prop="imageType" min-width="120">
           <template #default="scope"><dict-tag :options="IMAGE_TYPE" :value="scope.row.imageType"/></template>
         </el-table-column>
-        <el-table-column label="图片名称" align="left" prop="imageName" width="200" :show-overflow-tooltip="true" />
+        <el-table-column label="图片名称" align="left" prop="imageName" min-width="200" :show-overflow-tooltip="true" />
         <el-table-column prop="avatar" label="图片" align="center" width="100">
           <template #default="scope">
             <el-image style='width: 40px; height: 40px' :src='scope.row.imageUrl' :preview-src-list=[scope.row.imageUrl]></el-image>
@@ -60,8 +52,8 @@
       <pagination
          v-show="total > 0"
          :total="total"
-         v-model:page="queryParams.pageNo"
-         v-model:limit="queryParams.pageSize"
+         v-model:page="queryParams.current"
+         v-model:limit="queryParams.size"
          @pagination="getList"
       />
 
@@ -101,22 +93,18 @@
 
 <script setup name="ImageLibrary">
 import {
-  consoleImageLibraryPage,
-  consoleImageLibraryInfo,
-  consoleImageLibrarySave,
-  consoleImageLibraryRemove
-} from "@/api/sys";
+  imageLibraryPage,
+  imageLibraryInfo,
+  imageLibrarySave,
+  imageLibraryRemove
+} from "@/api/image";
 
 const { proxy } = getCurrentInstance();
 const { IMAGE_TYPE } = proxy.useDict("IMAGE_TYPE");
 
 const pageList = ref([]);
 const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
+const loading = ref(false);
 const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
@@ -124,8 +112,8 @@ const dateRange = ref([]);
 const data = reactive({
   form: {},
   queryParams: {
-    pageNo: 1,
-    pageSize: 20,
+    current: 1,
+    size: 20,
     imageType: undefined,
     imageName: undefined
   },
@@ -138,16 +126,16 @@ const data = reactive({
 const { queryParams, form, rules } = toRefs(data);
 
 function init() {
-  queryParams.value.pageNo = 1;
+  queryParams.value.current = 1;
 }
 
 /** 查询参数列表 */
 function getList() {
   loading.value = true;
-  consoleImageLibraryPage(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  imageLibraryPage(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     const data = res.data;
     pageList.value = data.rows;
-    total.value = data.totalCount;
+    total.value = data.total;
     loading.value = false;
   });
 }
@@ -166,7 +154,7 @@ function reset() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNo = 1;
+  queryParams.value.current = 1;
   getList();
 }
 
@@ -177,18 +165,12 @@ function resetQuery() {
   handleQuery();
 }
 
-/** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id);
-  single.value = selection.length !== 1;
-  multiple.value = !selection.length;
-}
 
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加参数";
+  title.value = "添加";
   form.value.sort = 99;
 }
 
@@ -196,7 +178,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   const id = row.id || ids.value;
-  consoleImageLibraryInfo({id}).then(res => {
+  imageLibraryInfo({id}).then(res => {
     form.value = res.data;
     open.value = true;
     title.value = "修改参数";
@@ -207,7 +189,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["editRef"].validate(valid => {
     if (valid) {
-      consoleImageLibrarySave(form.value).then(res => {
+      imageLibrarySave(form.value).then(res => {
         proxy.$modal.msgSuccess(form.value.id === undefined ?"新增成功":"修改成功");
         open.value = false;
         getList();
@@ -218,13 +200,8 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const idsMsg = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除参数编号为"' + idsMsg + '"的数据项？').then(() => {
-    const param = {
-      id: row.id,
-      ids: row.id ? null : ids.value
-    }
-    consoleImageLibraryRemove(param).then(res => {
+  proxy.$modal.confirm('是否确认删除: "' + row.imageName + '"？').then(() => {
+    imageLibraryRemove({id: row.id}).then(res => {
       if (res.code === 1) {
         getList();
         proxy.$modal.msgSuccess("删除成功");
