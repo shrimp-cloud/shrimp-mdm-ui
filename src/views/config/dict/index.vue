@@ -33,8 +33,8 @@
          <pagination
              v-show="total > 0"
              :total="total"
-             v-model:page="queryParams.pageNo"
-             v-model:limit="queryParams.pageSize"
+             v-model:page="queryParams.current"
+             v-model:limit="queryParams.size"
              @pagination="getList"
          />
        </el-col>
@@ -114,14 +114,7 @@
 </template>
 
 <script setup name="SysDict">
-import {
-  consoleDictTypePage,
-  consoleDictTypeSave,
-  consoleDictTypeRemove,
-  consoleDictList,
-  consoleDictSave,
-  consoleDictRemove
-} from "@/api/sys";
+import {consoleDictPage, consoleDictSave, consoleDictRemove, consoleDictItemList, consoleDictItemSave, consoleDictItemRemove} from "@/api/dict";
 
 const { proxy } = getCurrentInstance();
 
@@ -129,7 +122,6 @@ const pageList = ref([]);
 const dictList = ref([]);
 const open = ref(false);
 const loading = ref(true);
-const showSearch = ref(true);
 const total = ref(0);
 const title = ref("");
 
@@ -141,8 +133,8 @@ const data = reactive({
   form: {},
   formDict: {},
   queryParams: {
-    pageNo: 1,
-    pageSize: 20,
+    current: 1,
+    size: 20,
     dictType: undefined,
   },
   rules: {
@@ -157,16 +149,16 @@ const data = reactive({
 const { select, form, formDict, queryParams, rules, rulesDict } = toRefs(data);
 
 function init() {
-  queryParams.value.pageNo = 1;
+  queryParams.value.current = 1;
 }
 
 /** 查询参数列表 */
 function getList() {
   loading.value = true;
-  consoleDictTypePage(queryParams.value).then(res => {
+  consoleDictPage(queryParams.value).then(res => {
     const data = res.data;
     pageList.value = data.rows;
-    total.value = data.totalCount;
+    total.value = data.total;
 
     // 清除选中
     dictList.value = [];
@@ -183,7 +175,7 @@ function getSysDictList(row) {
   loading.value = true;
   select.value.dictType = row.dictType ? row.dictType: select.value.dictType;
   select.value.description = row.description ? row.description: select.value.description;
-  consoleDictList({dictType: row.dictType}).then(res => {
+  consoleDictItemList({dictType: row.dictType}).then(res => {
     dictList.value = res.data;
   }).finally(() => {
     loading.value = false;
@@ -214,7 +206,7 @@ function resetDict() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNo = 1;
+  queryParams.value.current = 1;
   getList();
 }
 
@@ -249,7 +241,7 @@ function handleUpdateDict(row) {
 function submitForm() {
   proxy.$refs["editRef"].validate(valid => {
     if (valid) {
-      consoleDictTypeSave(form.value).then(res => {
+      consoleDictSave(form.value).then(res => {
         if (res.code !== 1) {
           proxy.$modal.msgError("保存失败:" + res.msg);
         } else {
@@ -264,7 +256,7 @@ function submitForm() {
 function submitFormDict() {
   proxy.$refs["editRefDict"].validate(valid => {
     if (valid) {
-      consoleDictSave(formDict.value).then(res => {
+      consoleDictItemSave(formDict.value).then(res => {
         if (res.code !== 1) {
           proxy.$modal.msgError("保存失败:" + res.msg);
         } else {
@@ -284,7 +276,7 @@ function handleDelete(row) {
     const param = {
       id: row.id,
     }
-    consoleDictTypeRemove(param).then(res => {
+    consoleDictRemove(param).then(res => {
       if (res.code === 1) {
         getList();
         proxy.$modal.msgSuccess("删除成功");
@@ -301,7 +293,7 @@ function handleDeleteDict(row) {
     const param = {
       id: row.id,
     }
-    consoleDictRemove(param).then(res => {
+    consoleDictItemRemove(param).then(res => {
       if (res.code === 1) {
         getSysDictList({dictType: row.dictType});
         proxy.$modal.msgSuccess("删除成功");
