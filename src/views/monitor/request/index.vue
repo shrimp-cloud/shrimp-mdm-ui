@@ -1,6 +1,6 @@
 <template>
    <div class="app-container">
-      <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item prop="tenantId">
           <tenantDialog v-model:value="queryParams.tenantId"/>
         </el-form-item>

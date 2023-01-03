@@ -1,6 +1,6 @@
 <template>
    <div class="app-container">
-      <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item prop="imageType">
           <el-select v-model="queryParams.imageType" placeholder="图片类型" clearable style='width: 100px'>
             <el-option v-for="dict in IMAGE_TYPE" :key="dict.value" :label="dict.label" :value="dict.value"/>

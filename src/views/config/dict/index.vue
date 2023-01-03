@@ -1,6 +1,6 @@
 <template>
    <div class="app-container">
-      <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item prop="dictType">
           <el-input v-model="queryParams.dictType" placeholder="字典项" clearable style="width: 160px" @keyup.enter="handleQuery"/>
         </el-form-item>
