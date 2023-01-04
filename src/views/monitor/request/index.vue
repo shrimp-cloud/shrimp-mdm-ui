@@ -68,17 +68,14 @@
 </template>
 
 <script setup name="AccessLog">
-import TenantDialog from '@/views/components/TenantDialog/index.vue';
 import { parseTime } from '@/utils/ruoyi';
-import { consoleAccessLogPage } from "@/api/sys";
+import { consoleAccessLogPage } from "@/api/nouse";
 
 const { proxy } = getCurrentInstance();
 
 const pageList = ref([]);
 const loading = ref(true);
-const showSearch = ref(true);
 const ids = ref([]);
-const multiple = ref(true);
 const total = ref(0);
 const dateRange = ref([]);
 
