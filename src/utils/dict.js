@@ -7,24 +7,24 @@ import { dictItems } from '@/api/spring'
 export function useDict(...args) {
   const res = ref({});
   return (() => {
-    args.forEach((dict, index) => {
-      res.value[dict] = [];
-      const dicts = useDictStore().getDict(dict);
+    args.forEach((dictType, index) => {
+      res.value[dictType] = [];
+      const dicts = useDictStore().getDict(dictType);
       if (dicts) {
-        res.value[dict] = dicts;
+        res.value[dictType] = dicts;
       } else {
-        dictItems({type: dict}).then(resp => {
+        dictItems({type: dictType}).then(resp => {
           if (!resp.data) {
-            console.error("枚举不存在", dict);
+            console.error("枚举不存在", dictType);
             return;
           }
-          res.value[dict] = resp.data.map(p => ({
+          res.value[dictType] = resp.data.map(p => ({
             value: isNaN(p.dictValue) ? p.dictValue : Number(p.dictValue), // 若 value 为数字，需要转成数字
             label: p.dictLabel,
             elTagType: p.elType,
             elTagClass: p.cssClass
           }))
-          useDictStore().setDict(dict, res.value[dict]);
+          useDictStore().setDict(dictType, res.value[dictType]);
         })
       }
     })
