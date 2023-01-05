@@ -19,8 +19,8 @@
              @current-change="getSysDictList"
              :data="pageList">
            <el-table-column label="ID" align="center" prop="id" width="80"/>
-           <el-table-column label="字典项" align="left" prop="dictType" width="200" :show-overflow-tooltip="true" />
-           <el-table-column label="描述" align="left" prop="description" width="160" :show-overflow-tooltip="true" />
+           <el-table-column label="字典项" align="left" prop="dictType" min-width="200" :show-overflow-tooltip="true" />
+           <el-table-column label="描述" align="left" prop="description" min-width="160" :show-overflow-tooltip="true" />
            <el-table-column label="枚举数" align="left" prop="count" width="80" :show-overflow-tooltip="true"/>
            <el-table-column label="操作" align="center" fixed='right' width="80" class-name="small-padding fixed-width">
              <template #default="scope">
@@ -50,9 +50,10 @@
            </el-col>
          </el-row>
          <el-table v-loading="loading" height="630" :data="dictList">
-           <el-table-column label="字典键" align="left" prop="dictKey" width="200" :show-overflow-tooltip="true" />
-           <el-table-column label="字典值" align="left" prop="dictValue" width="200" :show-overflow-tooltip="true"/>
-           <el-table-column label="描述" align="left" prop="description" width="120" :show-overflow-tooltip="true"/>
+           <el-table-column label="字典值" align="left" prop="dictValue" min-width="120" :show-overflow-tooltip="true" />
+           <el-table-column label="字典标签" align="left" prop="dictLabel" min-width="120" :show-overflow-tooltip="true"/>
+           <el-table-column label="el类型" align="left" prop="elType" min-width="120" :show-overflow-tooltip="true"/>
+           <el-table-column label="描述" align="left" prop="description" min-width="120" :show-overflow-tooltip="true"/>
            <el-table-column label="排序" align="left" prop="sort" width="80" :show-overflow-tooltip="true"/>
            <el-table-column label="操作" align="center" fixed='right' width="80" class-name="small-padding fixed-width">
              <template #default="scope">
@@ -90,11 +91,14 @@
          <el-form-item label="字典项" prop="dictType">
            <el-input disabled v-model="formDict.dictType"/>
          </el-form-item>
-         <el-form-item label="字典键" prop="dictKey">
-           <el-input v-model="formDict.dictKey" placeholder="请输入字典键" />
-         </el-form-item>
          <el-form-item label="字典值" prop="dictValue">
            <el-input v-model="formDict.dictValue" placeholder="请输入字典值" />
+         </el-form-item>
+         <el-form-item label="字典标签" prop="dictLabel">
+           <el-input v-model="formDict.dictLabel" placeholder="请输入字典标签" />
+         </el-form-item>
+         <el-form-item label="el类型" prop="elType">
+           <el-input v-model="formDict.elType" placeholder="请输入字典el类型" />
          </el-form-item>
          <el-form-item label="描述" prop="description">
            <el-input v-model="formDict.description" placeholder="请输入描述" />
@@ -142,8 +146,8 @@ const data = reactive({
     description: [{ required: true, message: "描述不能为空", trigger: "blur" }],
   },
   rulesDict: {
-    dictKey: [{ required: true, message: "字典键不能为空", trigger: "blur" }],
     dictValue: [{ required: true, message: "字典值不能为空", trigger: "blur" }],
+    dictLabel: [{ required: true, message: "字典标签不能为空", trigger: "blur" }],
   }
 });
 const { select, form, formDict, queryParams, rules, rulesDict } = toRefs(data);
