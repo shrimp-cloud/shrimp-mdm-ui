@@ -117,9 +117,9 @@ function handleUpload(form) {
       proxy.$modal.msgError('上传异常：' + res.msg);
       return;
     }
-    const path = res.data.path;
-    const fileName = path.substring(path.lastIndexOf("/")+1);
-    fileList.value.push({ name: fileName, url: path });
+    const url = res.data.url;
+    const fileName = url.substring(url.lastIndexOf("/")+1);
+    fileList.value.push({ name: fileName, url: url });
     emit("update:modelValue", listToString(fileList.value));
   }).finally(() => {
     proxy.$modal.closeLoading();

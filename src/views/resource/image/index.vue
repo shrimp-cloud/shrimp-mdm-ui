@@ -114,19 +114,6 @@ function handleUpdate(row) {
   proxy.$refs["editRef"].handleEdit(row);
 }
 
-/** 提交按钮 */
-function submitForm() {
-  proxy.$refs["editRef"].validate(valid => {
-    if (valid) {
-      imageLibrarySave(form.value).then(res => {
-        proxy.$modal.msgSuccess(form.value.id === undefined ?"新增成功":"修改成功");
-        open.value = false;
-        getList();
-      });
-    }
-  });
-}
-
 init();
 getList();
 </script>
