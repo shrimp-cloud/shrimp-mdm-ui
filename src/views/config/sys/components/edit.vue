@@ -12,8 +12,8 @@
           <el-radio v-for="dict in BOOLEAN" :key="Number(dict.value)" :label="Number(dict.value)">{{ dict.label }}</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="备注" prop="comments">
-        <el-input v-model="form.comments" type="textarea" placeholder="请输入内容" />
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
       </el-form-item>
     </el-form>
     <template #footer>

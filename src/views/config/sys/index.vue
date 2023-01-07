@@ -24,7 +24,7 @@
         <el-table-column label="用户定义" align="center" prop="userDefine" width="80">
           <template #default="scope"><dict-tag :options="BOOLEAN" :value="scope.row.userDefine"/></template>
         </el-table-column>
-        <el-table-column label="备注" align="left" prop="comments" width="320" :show-overflow-tooltip="true" />
+        <el-table-column label="备注" align="left" prop="remark" width="320" :show-overflow-tooltip="true" />
         <el-table-column label="修改人" align="left" prop="updateByName" width="100" :show-overflow-tooltip="true"/>
         <el-table-column label="修改时间" align="center" prop="updateTime" width="160">
           <template #default="scope"><span>{{ parseTime(scope.row.updateTime) }}</span></template>
