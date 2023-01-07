@@ -23,15 +23,15 @@
 
       <el-table v-loading="loading" height="680" :data="pageList">
         <el-table-column label="ID" align="center" prop="id" width="80"/>
-        <el-table-column label="图片类型" align="center" prop="imageType" min-width="120">
-          <template #default="scope"><dict-tag :options="IMAGE_TYPE" :value="scope.row.imageType"/></template>
-        </el-table-column>
-        <el-table-column label="图片名称" align="left" prop="imageName" min-width="200" :show-overflow-tooltip="true" />
-        <el-table-column prop="avatar" label="图片" align="center" width="100">
+        <el-table-column prop="imageUrl" label="图片" align="center" width="100">
           <template #default="scope">
             <el-image style='width: 40px; height: 40px' :src='scope.row.imageUrl' :preview-src-list=[scope.row.imageUrl]></el-image>
           </template>
         </el-table-column>
+        <el-table-column label="图片类型" align="center" prop="imageType" min-width="120">
+          <template #default="scope"><dict-tag :options="IMAGE_TYPE" :value="scope.row.imageType"/></template>
+        </el-table-column>
+        <el-table-column label="图片名称" align="left" prop="imageName" min-width="200" :show-overflow-tooltip="true" />
         <el-table-column label="排序" align="left" prop="sort" width="80" :show-overflow-tooltip="true"/>
         <el-table-column label="修改人" align="left" prop="updateByName" width="100" :show-overflow-tooltip="true"/>
         <el-table-column label="修改时间" align="center" prop="updateTime" width="160">
@@ -64,6 +64,7 @@
 <script setup name="ImageLibrary">
 import {imageLibraryPage, imageLibraryRemove} from "@/api/image";
 import Edit from "./components/edit"
+import {consoleSysConfigRemove} from "@/api/sysConfig";
 
 const { proxy } = getCurrentInstance();
 const { IMAGE_TYPE } = proxy.useDict("IMAGE_TYPE");
@@ -112,6 +113,20 @@ function handleAdd() {
 }
 function handleUpdate(row) {
   proxy.$refs["editRef"].handleEdit(row);
+}
+
+/** 删除按钮操作 */
+function handleDelete(row) {
+  proxy.$modal.confirm('是否确认删除:"' + row.imageName + '"？').then(() => {
+    imageLibraryRemove({id: row.id}).then(res => {
+      if (res.code === 1) {
+        getList();
+        proxy.$modal.msgSuccess("删除成功");
+      } else {
+        proxy.$modal.msgError('删除失败: ' + res.msg);
+      }
+    })
+  }).catch(() => {});
 }
 
 init();
