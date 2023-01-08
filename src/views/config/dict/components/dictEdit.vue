@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body draggable :close-on-click-modal="false">
        <el-form ref="editRef" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="字典类型" prop="dictType">
              <el-input v-model="form.dictType" placeholder="请填写字典类型，英文大写和下划线" />

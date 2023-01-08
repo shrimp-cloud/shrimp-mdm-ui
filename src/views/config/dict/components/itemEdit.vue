@@ -1,6 +1,6 @@
 <template>
    <div class="app-container">
-     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+     <el-dialog :title="title" v-model="open" width="600px" append-to-body draggable :close-on-click-modal="false">
        <el-form ref="editRefDict" :model="form" :rules="rule" label-width="80px">
          <el-form-item label="字典项" prop="dictType">
            <el-input v-model="form.dictType" disabled/>
