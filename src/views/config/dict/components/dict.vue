@@ -11,7 +11,7 @@
            <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
          </el-form-item>
       </el-form>
-       <el-table v-loading="loading" highlight-current-row height="620" @current-change="getSysDictList" :data="dataList">
+       <el-table v-loading="loading" highlight-current-row height="620" @current-change="getDictItems" :data="dataList">
          <el-table-column label="ID" align="center" prop="id" width="80"/>
          <el-table-column label="字典项" align="left" prop="dictType" min-width="200" :show-overflow-tooltip="true" />
          <el-table-column label="描述" align="left" prop="description" min-width="160" :show-overflow-tooltip="true" />
@@ -62,7 +62,7 @@ function getList() {
   });
 }
 
-function getSysDictList(row) {
+function getDictItems(row) {
   emit("select", row);
 }
 
@@ -81,12 +81,8 @@ function handleUpdate(row) {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const idsMsg = row.id;
-  proxy.$modal.confirm('是否确认删除参数编号为"' + idsMsg + '"的数据项？').then(() => {
-    const param = {
-      id: row.id,
-    }
-    consoleDictRemove(param).then(res => {
+  proxy.$modal.confirm('是否确认删除参: "' + row.dictType + '"？').then(() => {
+    consoleDictRemove({ id: row.id}).then(res => {
       if (res.code === 1) {
         getList();
         proxy.$modal.msgSuccess("删除成功");

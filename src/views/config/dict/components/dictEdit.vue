@@ -20,12 +20,12 @@
     </el-dialog>
 </template>
 
-<script setup name="SysDict">
+<script setup name="DictEdit">
 import {consoleDictSave} from "@/api/dict";
 
-defineExpose({handleEdit})
-const { proxy } = getCurrentInstance();
+defineExpose({handleEdit});
 const emit = defineEmits(['change']);
+const { proxy } = getCurrentInstance();
 const open = ref(false);
 const title = ref("");
 const form = ref({});

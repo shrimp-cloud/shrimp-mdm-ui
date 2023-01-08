@@ -10,7 +10,7 @@
        <el-table-column label="字典标签" align="left" prop="dictLabel" min-width="120" :show-overflow-tooltip="true"/>
        <el-table-column label="样式" align="left" prop="elType" min-width="120" :show-overflow-tooltip="true">
          <template #default="scope">
-           <el-button v-if="scope.row.elType" :type="scope.row.elType" plain>{{scope.row.elType}}</el-button>
+           <el-button :type="scope.row.elType" plain>{{scope.row.elType || 'default'}}</el-button>
          </template>
        </el-table-column>
        <el-table-column label="描述" align="left" prop="description" min-width="120" :show-overflow-tooltip="true"/>
@@ -40,8 +40,13 @@ const title = ref("");
 const select = ref({});
 
 function init(row) {
-  select.value = row;
-  getList();
+  if (row) {
+    select.value = row;
+    getList();
+  } else {
+    select.value = {};
+    dataList.value = [];
+  }
 }
 
 function getList() {

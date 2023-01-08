@@ -77,6 +77,7 @@ function reset() {
 function handleEdit(row) {
   reset();
   form.value = JSON.parse(JSON.stringify(row));
+  form.value.description = '';
   if (!row || !row.id) {
     open.value = true;
     title.value = "添加";

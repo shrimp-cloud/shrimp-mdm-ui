@@ -33,7 +33,7 @@ const { proxy } = getCurrentInstance();
 const dictTitle = ref('字典枚举: 请选择字典项');
 
 function selectDict(row) {
-  dictTitle.value = '字典枚举: ' + row.dictType + ':' + row.description;
+  dictTitle.value = row ? '字典枚举: ' + row.dictType + ':' + row.description : '字典枚举: 请选择字典项';
   proxy.$refs["itemRef"].init(row);
 }
 
