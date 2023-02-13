@@ -72,7 +72,7 @@ function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除： "' + row.dictValue + '"的字典内容项？').then(() => {
     consoleDictItemRemove({id: row.id}).then(res => {
       if (res.code === 1) {
-        getSysDictList({dictType: row.dictType});
+        init(select.value);
         proxy.$modal.msgSuccess("删除成功");
       } else {
         proxy.$modal.msgError('删除失败: ' + res.msg);

@@ -75,7 +75,6 @@ const { proxy } = getCurrentInstance();
 
 const pageList = ref([]);
 const loading = ref(true);
-const ids = ref([]);
 const total = ref(0);
 const dateRange = ref([]);
 
