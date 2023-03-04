@@ -2,7 +2,7 @@
    <div class="app-container">
      <el-row :gutter="20">
        <el-col :span="12">
-         <el-card class="box-card">
+         <el-card class="box-card el-card-define">
            <template #header>
              <div class="card-header">
                <span>字典项</span>
@@ -12,7 +12,7 @@
          </el-card>
        </el-col>
        <el-col :span="12">
-         <el-card class="box-card">
+         <el-card class="box-card  el-card-define">
            <template #header>
              <div class="card-header">
                <span>{{ dictTitle }}</span>
@@ -38,3 +38,13 @@ function selectDict(row) {
 }
 
 </script>
+
+<style>
+.el-card-define {
+  min-height: 100%;
+  height: 100%;
+}
+.el-card-define > .el-card__body {
+  height: 100%;
+}
+</style>

@@ -5,7 +5,7 @@
          <el-button type="primary" plain icon="Plus" :disabled="!select.dictType" @click="handleAdd">添加枚举</el-button>
        </el-form-item>
      </el-form>
-     <el-table v-loading="loading" height="620" :data="dataList">
+     <el-table v-loading="loading" :height="tableHeight" :data="dataList">
        <el-table-column label="字典值" align="left" prop="dictValue" min-width="120" :show-overflow-tooltip="true" />
        <el-table-column label="字典标签" align="left" prop="dictLabel" min-width="120" :show-overflow-tooltip="true"/>
        <el-table-column label="样式" align="left" prop="elType" min-width="120" :show-overflow-tooltip="true">
@@ -31,6 +31,7 @@
 import {consoleDictItemList, consoleDictItemRemove} from "@/api/dict";
 import ItemEdit from "./itemEdit"
 
+const tableHeight = computed(() => window.innerHeight - 296);
 defineExpose({init})
 const { proxy } = getCurrentInstance();
 

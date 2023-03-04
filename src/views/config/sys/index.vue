@@ -17,14 +17,14 @@
           <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-table v-loading="loading" height="680" :data="dataList">
+      <el-table v-loading="loading" :height="tableHeight" :data="dataList">
         <el-table-column label="ID" align="center" prop="id" width="80"/>
-        <el-table-column label="参数键名" align="left" prop="sysKey" width="200" :show-overflow-tooltip="true" />
-        <el-table-column label="参数键值" align="left" prop="sysValue" width="200" :show-overflow-tooltip="true"/>
+        <el-table-column label="参数键名" align="left" prop="sysKey" min-width="200" :show-overflow-tooltip="true" />
+        <el-table-column label="参数键值" align="left" prop="sysValue" min-width="200" :show-overflow-tooltip="true"/>
         <el-table-column label="用户定义" align="center" prop="userDefine" width="80">
           <template #default="scope"><dict-tag :options="BOOLEAN" :value="scope.row.userDefine"/></template>
         </el-table-column>
-        <el-table-column label="备注" align="left" prop="remark" width="320" :show-overflow-tooltip="true" />
+        <el-table-column label="备注" align="left" prop="remark" min-width="320" :show-overflow-tooltip="true" />
         <el-table-column label="修改人" align="left" prop="updateByName" width="100" :show-overflow-tooltip="true"/>
         <el-table-column label="修改时间" align="center" prop="updateTime" width="160">
           <template #default="scope"><span>{{ parseTime(scope.row.updateTime) }}</span></template>
@@ -57,6 +57,7 @@
 import {consoleSysConfigPage, consoleSysConfigRemove} from "@/api/sysConfig";
 import Edit from "./components/edit"
 
+const tableHeight = computed(() => window.innerHeight - 216);
 const { proxy } = getCurrentInstance();
 const { BOOLEAN } = proxy.useDict("BOOLEAN");
 

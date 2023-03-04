@@ -11,7 +11,7 @@
            <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
          </el-form-item>
       </el-form>
-       <el-table v-loading="loading" highlight-current-row height="620" @current-change="getDictItems" :data="dataList">
+       <el-table v-loading="loading" highlight-current-row :height="tableHeight" @current-change="getDictItems" :data="dataList">
          <el-table-column label="ID" align="center" prop="id" width="80"/>
          <el-table-column label="字典项" align="left" prop="dictType" min-width="200" :show-overflow-tooltip="true" />
          <el-table-column label="描述" align="left" prop="description" min-width="160" :show-overflow-tooltip="true" />
@@ -33,6 +33,7 @@
 import {consoleDictPage, consoleDictRemove} from "@/api/dict";
 import DictEdit from "./dictEdit"
 
+const tableHeight = computed(() => window.innerHeight - 296);
 const emit = defineEmits(['select']);
 const { proxy } = getCurrentInstance();
 const dataList = ref([]);
